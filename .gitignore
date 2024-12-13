@@ -1,3 +1,8 @@
 
 b/*
 *.so
+
+buildsys/VS17/.vs
+buildsys/VS17/ulutest/*
+buildsys/VS17/*.user
+*.dll
