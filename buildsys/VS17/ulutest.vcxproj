@@ -105,6 +105,14 @@
     <ClCompile Include="..\..\src\ulu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CustomBuild Include="..\..\src\ulutest.lua">
+      <Command>luac -o %(FileName).luac %(Identity)</Command>
+      <Outputs>%(FileName).luac</Outputs>
+      <Message>Compile to bytecode: %(Identity).</Message>
+      <TreatOutputAsContent>true</TreatOutputAsContent>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
     <ResourceCompile Include="ulutest.rc" />
   </ItemGroup>
   <ItemGroup>

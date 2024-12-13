@@ -5,4 +5,5 @@ b/*
 buildsys/VS17/.vs
 buildsys/VS17/ulutest/*
 buildsys/VS17/*.user
+*.luac
 *.dll
