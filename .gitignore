@@ -1,5 +1,6 @@
 
 b/*
+buildsys/gcc/*
 *.so
 
 buildsys/VS17/.vs
