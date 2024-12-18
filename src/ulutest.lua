@@ -75,6 +75,15 @@ local failedexpectation=function(tb, hint)
     end
 end
 
+local joinsep=function(a, b, sep)
+    sep=sep or " "
+    if a and b then return a..sep..b
+    elseif a then return a
+    elseif b then return b
+    else return ""
+    end
+end
+
 local mttest={
     EXPECT=function(self, cond, hint)
         if not cond then
@@ -88,7 +97,8 @@ local mttest={
         if not value then
             self.met_expectations=self.met_expectations+1
         else
-            print(failedexpectation(debug.traceback("",2), string.format("%s, but is %s", hint, helpful_value_representation(value))))
+            local explanation=joinsep(hint, string.format("should bei nil, but is %s", helpful_value_representation(value)))
+            print(failedexpectation(debug.traceback("",2), explanation))
             self.unmet_expectations=self.unmet_expectations+1
         end
     end,
@@ -96,7 +106,11 @@ local mttest={
         if (value1 and value2 and value1==value2) or (not value1 and not value2) then
             self.met_expectations=self.met_expectations+1
         else
-            print(failedexpectation(debug.traceback("",2), string.format("%s not equal: %s, %s", hint or "", helpful_value_representation(value1), helpful_value_representation(value2))))
+            local explanation
+            if hint then explanation=joinsep(hint, string.format("unexpected (expected %s, but was %s)", helpful_value_representation(value1), helpful_value_representation(value2)))
+            else         explanation=string.format("expected %s, but was %s", helpful_value_representation(value1), helpful_value_representation(value2))
+            end
+            print(failedexpectation(debug.traceback("",2), explanation))
             self.unmet_expectations=self.unmet_expectations+1
         end
     end,
