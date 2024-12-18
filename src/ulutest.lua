@@ -17,6 +17,7 @@ local SKIPPING=bind.tags.SKIPPING
 local RUNTEST=bind.tags.RUNTEST
 local FAILEDTEST=bind.tags.FAILEDTEST
 local SUCCESSFULTEST=bind.tags.SUCCESSFULTEST
+local EMPTYTEST=bind.tags.EMPTYTEST
 local FRAME=bind.tags.FRAME
 local SEP=bind.tags.SEP
 local DISABLED=bind.tags.DISABLED
@@ -206,7 +207,7 @@ return {
                 print(SUCCESSFULTEST.." "..testdotname.." ("..dur_test.." ms)")
                 return {name=T.name, outcome="successful", duration=tb-ta}
             else
-                print(string.format("%s Warning: Test applies no criteria", SUCCESSFULTEST))
+                print(string.format("%s Warning: Test applies no criteria", EMPTYTEST))
                 return {name=T.name, outcome="void", duration=tb-ta}
             end
         end
