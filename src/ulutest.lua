@@ -130,7 +130,8 @@ local mttest={
         if not value then
             self.asserted_ok=self.asserted_ok+1
         else
-            print(failedassertion(debug.traceback("",2), string.format("%s, but is %s", hint, helpful_value_representation(value))))
+            local explanation=joinsep(hint, string.format("should bei nil, but is %s", helpful_value_representation(value)))
+            print(failedassertion(debug.traceback("",2), explanation))
             self.failed_assertions=self.failed_assertions+1
             -- Hier geben wir error eine Tabelle,
             -- damit der Messagehandler den Fehler von einem Fehler im
@@ -142,7 +143,11 @@ local mttest={
         if (value1 and value2 and value1==value2) or (not value1 and not value2) then
             self.asserted_ok=self.asserted_ok+1
         else
-            print(failedassertion(debug.traceback("",2), string.format("%s not equal: %s, %s", hint, helpful_value_representation(value1), helpful_value_representation(value2))))
+            local explanation
+            if hint then explanation=joinsep(hint, string.format("unexpected (expected %s, but was %s)", helpful_value_representation(value1), helpful_value_representation(value2)))
+            else         explanation=string.format("expected %s, but was %s", helpful_value_representation(value1), helpful_value_representation(value2))
+            end
+            print(failedassertion(debug.traceback("",2), explanation))
             self.failed_assertions=self.failed_assertions+1
             -- Hier geben wir error eine Tabelle,
             -- damit der Messagehandler den Fehler von einem Fehler im
