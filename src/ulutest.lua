@@ -166,10 +166,10 @@ local function msghandler(msg)
         -- Diese Fehler werden von Lua selbst erzeugt.
         return tostring(msg)
     elseif type(msg)=="table" then
-        -- Diese Fehler werden von ltest.lua erzeugt.
+        -- Diese Fehler werden von ulutest.lua erzeugt.
         -- Sie sollen nicht normal formatiert werden,
         -- weil der Anwender nichts mit den Dateinamen und
-        -- Zeilennummern in ltest.lua anfangen kann.
+        -- Zeilennummern in ulutest.lua anfangen kann.
         local path,line=parse_traceback(debug.traceback("",4))
         return string.format("%s:%d: %s.", path, line, msg[1])
     else return "error of type "..type(msg)
