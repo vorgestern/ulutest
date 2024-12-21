@@ -5,6 +5,10 @@ buildsys/gcc/*
 
 buildsys/VS17/.vs
 buildsys/VS17/ulutest/*
+buildsys/VS17/Debug
+buildsys/VS17/Release
+buildsys/VS17/x64
 buildsys/VS17/*.user
+buildsys/VS17/*.aps
 *.luac
 *.dll
