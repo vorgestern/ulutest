@@ -16,7 +16,7 @@ end
 
 local tt=ulu.TT
 
-ulu.RUN(
+ulu.RUN {
 
 {
     name="function demo1",
@@ -42,4 +42,4 @@ ulu.RUN(
     end)
 }
 
-)
+}

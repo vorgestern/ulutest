@@ -1,6 +1,7 @@
 
 #include <string>
 #include <vector>
+#include <format>
 #include <lua.hpp>
 
 using namespace std;
@@ -88,6 +89,44 @@ extern "C" int gtest_tags(lua_State*L)
 {
     const bool tty=check_tty(1);
     mktagtable(L, tty?Colortags:Blacktags);
+    return 1;
+}
+
+// ============================================================================
+
+constexpr string markdown(const string&str, const pair<string,string>&color)
+{
+    string s=color.first;
+    for (auto c: str) if (c==' ') s.append("&nbsp;"); else s.push_back(c);
+    s.append(color.second);
+    return s;
+}
+
+string mdcolor(string_view color) { return format("<span style='color:{}'>", color); }
+const pair<string,string>
+    mdred=make_pair(mdcolor("red"), "</span>"),
+    mdblue=make_pair(mdcolor("#8080ff"), "</span>"),     // #7D97FF
+    mdgreen=make_pair(mdcolor("#2F2"), "</span>"),
+    mdyellow=make_pair(mdcolor("yellow"), "</span>");
+const vector<pair<string,string>> Markdowntags={
+    make_pair("RUNTEST", markdown(RUNTEST, mdblue)),
+    make_pair("FAILEDTEST", markdown(FAILEDTEST, mdred)),
+    make_pair("PASSEDTEST", markdown(PASSEDTEST, mdgreen)),
+    make_pair("SUCCESSFULTEST", markdown(SUCCESSFULTEST, mdgreen)),
+    make_pair("EMPTYTEST", markdown(SUCCESSFULTEST, mdyellow)),
+    make_pair("FAILEDCRITERION", markdown(FAILEDCRITERION, mdred)),
+    make_pair("SUCCESSFULCRITERION", markdown(SUCCESSFULCRITERION, mdgreen)),
+    make_pair("FRAME", markdown(FRAME, mdblue)),
+    make_pair("SEP", markdown(SEP, mdblue)),
+    make_pair("INFO", markdown(INFO, mdyellow)),
+    make_pair("DISABLED", markdown(DISABLED, mdyellow)),
+    make_pair("SKIPPING", markdown(SKIPPING, mdyellow))
+};
+
+extern "C" int markdown_tags(lua_State*L)
+{
+    const bool tty=check_tty(1);
+    mktagtable(L, tty?Colortags:Markdowntags);
     return 1;
 }
 

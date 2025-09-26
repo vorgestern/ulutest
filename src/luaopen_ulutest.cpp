@@ -49,6 +49,7 @@ static int check_tty(lua_State*L)
     return lua_pushboolean(L, check_tty(fd)), 1;
 }
 
+extern "C" int markdown_tags(lua_State*);
 extern "C" int gtest_tags(lua_State*);
 extern "C" int timestamp(lua_State*);
 
@@ -61,6 +62,7 @@ extern "C" ULUTEST_EXPORTS int luaopen_ulutest(lua_State*Q)
         lua_createtable(Q, 0, 2);
             lua_pushcfunction(Q, timestamp);                     lua_setfield(Q, -2, "timestamp");
             lua_pushcfunction(Q, gtest_tags); lua_call(Q, 0, 1); lua_setfield(Q, -2, "tags");
+            lua_pushcfunction(Q, markdown_tags); lua_call(Q, 0, 1); lua_setfield(Q, -2, "markdowntags");
             lua_pushcfunction(Q, check_tty);                     lua_setfield(Q, -2, "isatty");
         lua_call(Q, 1, 1);
         return 1;

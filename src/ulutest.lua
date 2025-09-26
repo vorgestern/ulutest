@@ -11,17 +11,24 @@
 --]]
 
 local bind=...
-local FAILEDCRITERION=bind.tags.FAILEDCRITERION
-local INFO=bind.tags.INFO
-local SKIPPING=bind.tags.SKIPPING
-local RUNTEST=bind.tags.RUNTEST
-local FAILEDTEST=bind.tags.FAILEDTEST
-local SUCCESSFULTEST=bind.tags.SUCCESSFULTEST
-local EMPTYTEST=bind.tags.EMPTYTEST
-local FRAME=bind.tags.FRAME
-local SEP=bind.tags.SEP
-local DISABLED=bind.tags.DISABLED
-local PASSEDTEST=bind.tags.PASSEDTEST
+local tags=bind.tags
+-- local tags=bind.markdowntags
+local FAILEDCRITERION=tags.FAILEDCRITERION
+local INFO=tags.INFO
+local SKIPPING=tags.SKIPPING
+local RUNTEST=tags.RUNTEST
+local FAILEDTEST=tags.FAILEDTEST
+local SUCCESSFULTEST=tags.SUCCESSFULTEST
+local EMPTYTEST=tags.EMPTYTEST
+local FRAME=tags.FRAME
+local SEP=tags.SEP
+local DISABLED=tags.DISABLED
+local PASSEDTEST=tags.PASSEDTEST
+
+if not bind.isatty(1) and tags==bind.markdowntags then
+    local generic_print=print
+    print=function(...) generic_print(..., "<br/>") end
+end
 
 local helpful_boolean=function(v)
     if v==true then return "true"
