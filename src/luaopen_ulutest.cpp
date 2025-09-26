@@ -1,18 +1,19 @@
 
-#include <cstring>
 #include <string_view>
+#include <format>
 #include <lua.hpp>
 
+using std::format;
 using std::string_view;
+const auto modulename="ulutest";
 string_view chunk_ulutest();
 
-static int mkloader(lua_State*L, const char name[], const string_view impl)
+static int mkloader(lua_State*L, string_view impl)
 {
     if (impl.size()==0)
     {
-        char pad[100];
-        const auto nw=snprintf(pad, sizeof(pad), "Chunk is empty ('%s').", name);
-        lua_pushlstring(L, pad, nw);
+        const auto msg=format("Chunk is empty ('{}').", modulename);
+        lua_pushlstring(L, msg.c_str(), msg.size());
         return lua_error(L);
     }
     const string_view errs[]=
@@ -24,12 +25,11 @@ static int mkloader(lua_State*L, const char name[], const string_view impl)
         "out of memory", // #define LUA_ERRMEM 4
         "unknown error", // #define LUA_ERRERR 5
     };
-    if (const int rc=luaL_loadbufferx(L, impl.data(), impl.size(), name, nullptr); rc==LUA_OK) return 1;
+    if (const int rc=luaL_loadbufferx(L, impl.data(), impl.size(), modulename, nullptr); rc==LUA_OK) return 1;
     else
     {
-        char pad[100];
-        const auto nw=snprintf(pad, sizeof(pad), "%s: loading '%s' failed with rc=%d.", errs[rc].data(), name, rc);
-        lua_pushlstring(L, pad, nw);
+        const auto msg=format("{}: loading '{}' failed with rc={}.", errs[rc], modulename, rc);
+        lua_pushlstring(L, msg.c_str(), msg.size());
         return lua_error(L);
     }
 }
@@ -54,8 +54,7 @@ extern "C" int timestamp(lua_State*);
 
 extern "C" ULUTEST_EXPORTS int luaopen_ulutest(lua_State*Q)
 {
-    const auto ulutest=chunk_ulutest();
-    if (mkloader(Q, "ulutest", ulutest)==1)
+    if (mkloader(Q, chunk_ulutest())==1)
     {
         // Pass bindings to functions implemented in C to loader
         // for inclusion in module table.

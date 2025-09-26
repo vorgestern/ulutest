@@ -7,7 +7,7 @@ using namespace std;
 
 bool check_tty(int fd);
 
-const pair<string,string>
+constexpr const pair<string,string>
     red=make_pair("\x1b[1;31m", "\x1b[0m"),
     blue=make_pair("\x1b[1;34m", "\x1b[0m"),
     green=make_pair("\x1b[1;32m", "\x1b[0m"),
@@ -42,7 +42,7 @@ const auto
 // DISABLED=           yellow "[ DISABLED ]"
 // SKIPPING=           yellow "[ skipping ]"
 
-const string bunt(const string&str, const pair<string,string>&color){ return color.first+str+color.second; }
+constexpr const string bunt(const string&str, const pair<string,string>&color){ return color.first+str+color.second; }
 
 const vector<pair<string,string>> Colortags={
     make_pair("RUNTEST", bunt(RUNTEST, blue)),
@@ -120,12 +120,7 @@ extern "C" int tsdiff(lua_State*L)
     if (!istimestamp(L, 2)) return luaL_typeerror(L, 2, "timestamp (from tshighres)");
     const tp T1=*reinterpret_cast<tp*>(lua_touserdata(L, 1)),
              T2=*reinterpret_cast<tp*>(lua_touserdata(L, 2));
-#if 0
-    auto d=(T1-T2)/1us;
-    lua_pushnumber(L, 0.001*d);
-#else
     lua_pushinteger(L, (T1-T2)/1ms);
-#endif
     return 1;
 }
 
@@ -146,7 +141,7 @@ static void gettsmeta(lua_State*L)
         const auto t2=lua_getfield(L, -1, mtname);  // Reg mt|nil
         if (t2!=LUA_TTABLE)
         {
-            lua_pushstring(L, "Kann keine Tabelle erzeugen.");
+            lua_pushstring(L, "Cannot create metatable.");
             lua_error(L);
         }
         lua_remove(L, -2);  // mt
@@ -163,9 +158,9 @@ static void gettsmeta(lua_State*L)
 
 extern "C" int timestamp(lua_State*L)
 {
-    auto*jetzt=reinterpret_cast<tp*>(lua_newuserdatauv(L, sizeof(tp), 0));
+    auto*now=reinterpret_cast<tp*>(lua_newuserdatauv(L, sizeof(tp), 0));
     gettsmeta(L);
     lua_setmetatable(L, -2);
-    *jetzt=clk::now();
+    *now=clk::now();
     return 1;
 }
