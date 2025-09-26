@@ -13,3 +13,7 @@ with
     ULU.RUN {
     ...
     }
+
+## 0.21 (27.9.2025)
+Added option to output colored markdown, sadly not usable on github.
+Turned off.

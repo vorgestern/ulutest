@@ -196,7 +196,7 @@ end
 local testcase_running=""
 
 return {
-    version="0.2",
+    version="0.21",
     url="https://github.com/vorgestern/ulutest.git",
     tags=bind.tags,
     timestamp=bind.timestamp,
