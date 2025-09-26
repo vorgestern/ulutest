@@ -186,6 +186,8 @@ end
 local testcase_running=""
 
 return {
+    version="0.2",
+    url="https://github.com/vorgestern/ulutest.git",
     tags=bind.tags,
     timestamp=bind.timestamp,
     isatty=bind.isatty,
@@ -231,7 +233,7 @@ return {
             end
         end
     end,
-    RUN=function(...)
+    RUN=function(Testcases)
         local Summary={
             testcases=0,
             tests=0,
@@ -259,7 +261,6 @@ return {
                 end
             end
         end
-        local Testcases={...}
         local total=0
         for j,k in ipairs(Testcases) do total=total+#k end
         print(FRAME.." Running "..singularplural(total, "test").." from "..singularplural(#Testcases, "test case")..".")
