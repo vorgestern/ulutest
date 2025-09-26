@@ -40,6 +40,13 @@ This output was produced with demo_simple.lua, essentially ..
         }
     }
 
+# How to build ..
+## .. either on Windows
+Edit buildsys/VS17/Lua.props to match your Lua-installation.
+Open buildsys/VS17/ulutest.sln and proceed as always.
+## .. or else on Linux
+Use ./Makefile. Lua 5.4 is expected in /usr/include/lua5.4.
+
 # To do
 ## still ..
 - Account for the difference in the bottom line if tests have been skipped.
