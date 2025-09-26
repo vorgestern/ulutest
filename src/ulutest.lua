@@ -11,8 +11,16 @@
 --]]
 
 local bind=...
-local tags=bind.tags
--- local tags=bind.markdowntags
+local tags={}
+if true then
+            tags=bind.tags
+else
+            tags=bind.markdowntags
+            if not bind.isatty(1) then
+                local generic_print=print
+                print=function(...) generic_print(..., "<br/>") end
+            end
+end
 local FAILEDCRITERION=tags.FAILEDCRITERION
 local INFO=tags.INFO
 local SKIPPING=tags.SKIPPING
@@ -24,11 +32,6 @@ local FRAME=tags.FRAME
 local SEP=tags.SEP
 local DISABLED=tags.DISABLED
 local PASSEDTEST=tags.PASSEDTEST
-
-if not bind.isatty(1) and tags==bind.markdowntags then
-    local generic_print=print
-    print=function(...) generic_print(..., "<br/>") end
-end
 
 local helpful_boolean=function(v)
     if v==true then return "true"
