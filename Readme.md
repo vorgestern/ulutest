@@ -42,15 +42,19 @@ This output was produced with demo_simple.lua, essentially ..
 
 # How to build ..
 ## .. either on Windows
-Edit buildsys/VS17/Lua.props to match your Lua-installation.
+**Location of Lua:** Edit buildsys/VS17/Lua.props to match your Lua-installation.<br/>
+**Output module on LUA_CPATH:** Optionally define a local installation directory by supplying LocalInstall.props.
+(No such file is supplied by default. Use https://github.com/vorgestern/vsprops/LocalInstall_LuaModules.props as a starting point.)<br/>
+
 Open buildsys/VS17/ulutest.sln and proceed as always.
+
 ## .. or else on Linux
 Use ./Makefile. Lua 5.4 is expected in /usr/include/lua5.4.
 
-# To do
-## still ..
+# To do ...
+## ... still ..
 - Account for the difference in the bottom line if tests have been skipped.
 - Introduce setup and teardown on a per test basis.
 - Allow listing and filtering tests.
-## no more
+## ... no more
 - Make ulutest process a list of tests rather than a random number of test arguments.
