@@ -11,6 +11,10 @@
         <OutDir>..\..\</OutDir>
     </PropertyGroup>
 
+    <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+        <Import Project="LocalInstall.props" Condition="exists('LocalInstall.props')"/>
+    </ImportGroup>
+
     <ItemDefinitionGroup>
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
