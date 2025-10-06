@@ -2,7 +2,7 @@
 XFILES   := main
 CPPFLAGS := -I/usr/include/lua5.4 -I LuaAide/include
 CXXFLAGS := --std=c++20 -Wall -Werror
-.PHONY: clean dir
+.PHONY: clean dir localinstall
 
 all: dir ulutest.so
 clean:
@@ -33,3 +33,9 @@ b/ulutest.o: b/ulutest.luac
 	nm $@ > $(@:.o=.symbols)
 b/ulutest.luac: src/ulutest.lua
 	luac -o $@ $<
+
+localinstall:
+	@# No comments in localinstall.sh!
+	@if [ -f "localinstall.sh" ]; then \
+		$(shell cat ./localinstall.sh); \
+	fi
