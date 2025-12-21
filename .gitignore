@@ -3,6 +3,9 @@ b/*
 buildsys/gcc/*
 *.so
 
+.vscode
+localinstall.sh
+
 buildsys/VS17/.vs
 buildsys/VS17/ulutest/*
 buildsys/VS17/Debug
