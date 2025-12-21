@@ -18,7 +18,7 @@ b/%.o: src/%.cpp LuaAide/include/LuaAide.h
 # ============================================================
 
 ulutest.so: b/luaopen_ulutest.o b/ulu.o b/resources_linux.o b/ulutest.o
-	g++ -shared -fpic -o $@ $^
+	g++ -shared -fpic -z noexecstack -o $@ $^
 
 b/luaopen_ulutest.o: src/luaopen_ulutest.cpp
 	g++ -o $@ -c $< -fpic $(CPPFLAGS) $(CXXFLAGS)
