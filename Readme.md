@@ -56,5 +56,9 @@ Use ./Makefile. Lua 5.4 is expected in /usr/include/lua5.4.
 - Account for the difference in the bottom line if tests have been skipped.
 - Introduce setup and teardown on a per test basis.
 - Allow listing and filtering tests.
+- Optionally inject functions into global namespace.
+- Allow marking tests as 'disabled' or 'expected to fail'.
+- Improve message comparing tables: ASSERT_EQ({}, result) does not make sense,
+  because tables are compared by address ('expected table, but was table').
 ## ... no more
 - Make ulutest process a list of tests rather than a random number of test arguments.
