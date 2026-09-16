@@ -217,54 +217,56 @@ end
 -- Leider braucht es bisher diesen 'globalen' Zustand.
 local testcase_running=""
 
+local TT=function(name, func)
+    local T=setmetatable({
+        name=name,
+        asserted_ok=0,
+        failed_assertions=0,
+        met_expectations=0,
+        unmet_expectations=0
+    }, mttest)
+    return function(disabled)
+        if disabled then
+            print(string.format("%s %s", SKIPPING, name))
+            return {name=T.name, outcome="skipped", duration=0}
+        end
+        local name_skipped=T.name:match "DISABLED%s*(.*)"
+        if name_skipped then
+            print(string.format("%s %s", SKIPPING, name_skipped))
+            return {name=T.name, outcome="disabled", duration=0}
+        end
+        local testdotname=testcase_running.."."..name
+        print(string.format("%s %s", RUNTEST, testdotname))
+        local ta=bind.timestamp()
+        local flag,err=xpcall(func, msghandler, T)
+        local tb=bind.timestamp()
+        local dur_test=tb-ta
+        if not flag then
+            print(string.format("%s Test was aborted: %s", FAILEDTEST, err))
+            return {name=T.name, outcome="aborted", duration=tb-ta}
+        elseif T.failed_assertions>0 then
+            print(string.format("%s %s", FAILEDTEST, name))
+            return {name=T.name, outcome="failed", duration=tb-ta}
+        elseif T.unmet_expectations>0 then
+            print(string.format("%s %s: unmet expectations", FAILEDTEST, name))
+            return {name=T.name, outcome="unexpected", duration=tb-ta, unmet_expectations=T.unmet_expectations}
+        elseif T.asserted_ok+T.met_expectations>0 then
+            print(SUCCESSFULTEST.." "..testdotname.." ("..dur_test.." ms)")
+            return {name=T.name, outcome="successful", duration=tb-ta}
+        else
+            print(string.format("%s Warning: Test applies no criteria", EMPTYTEST))
+            return {name=T.name, outcome="void", duration=tb-ta}
+        end
+    end
+end
+
 return {
     version="0.21",
     url="https://github.com/vorgestern/ulutest.git",
     tags=bind.tags,
     timestamp=bind.timestamp,
     isatty=bind.isatty,
-    TT=function(name, func)
-        local T=setmetatable({
-            name=name,
-            asserted_ok=0,
-            failed_assertions=0,
-            met_expectations=0,
-            unmet_expectations=0
-        }, mttest)
-        return function(disabled)
-            if disabled then
-                print(string.format("%s %s", SKIPPING, name))
-                return {name=T.name, outcome="skipped", duration=0}
-            end
-            local name_skipped=T.name:match "DISABLED%s*(.*)"
-            if name_skipped then
-                print(string.format("%s %s", SKIPPING, name_skipped))
-                return {name=T.name, outcome="disabled", duration=0}
-            end
-            local testdotname=testcase_running.."."..name
-            print(string.format("%s %s", RUNTEST, testdotname))
-            local ta=bind.timestamp()
-            local flag,err=xpcall(func, msghandler, T)
-            local tb=bind.timestamp()
-            local dur_test=tb-ta
-            if not flag then
-                print(string.format("%s Test was aborted: %s", FAILEDTEST, err))
-                return {name=T.name, outcome="aborted", duration=tb-ta}
-            elseif T.failed_assertions>0 then
-                print(string.format("%s %s", FAILEDTEST, name))
-                return {name=T.name, outcome="failed", duration=tb-ta}
-            elseif T.unmet_expectations>0 then
-                print(string.format("%s %s: unmet expectations", FAILEDTEST, name))
-                return {name=T.name, outcome="unexpected", duration=tb-ta, unmet_expectations=T.unmet_expectations}
-            elseif T.asserted_ok+T.met_expectations>0 then
-                print(SUCCESSFULTEST.." "..testdotname.." ("..dur_test.." ms)")
-                return {name=T.name, outcome="successful", duration=tb-ta}
-            else
-                print(string.format("%s Warning: Test applies no criteria", EMPTYTEST))
-                return {name=T.name, outcome="void", duration=tb-ta}
-            end
-        end
-    end,
+    TT=TT,
     RUN=function(Testcases)
         local Summary={
             testcases=0,
@@ -318,11 +320,21 @@ return {
                 testcase_running=testcasename
                 local nt,last=0,#Testcase
                 local ta=bind.timestamp()
+                if type(Testcase.setup)=="function" then
+                    local Setup=TT("setup", Testcase.setup)
+                    local R=Setup(nil)
+                    aggregate(R, testcasename)
+                end
                 for _,func in ipairs(Testcase) do
                     local R=func()
                     aggregate(R, testcasename)
                     nt=nt+1
                     -- if _<last then print(SEP) end
+                end
+                if Testcase.teardown then
+                    local Teardown=TT("teardown", Testcase.teardown)
+                    local R=Teardown(nil)
+                    aggregate(R, testcasename)
                 end
                 local tb=bind.timestamp()
                 local dur_testcase=tb-ta
