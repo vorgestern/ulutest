@@ -323,25 +323,38 @@ return {
                 testcase_running=testcasename
                 local nt,last=0,#Testcase
                 local ta=bind.timestamp()
+                local stop=nil
                 if type(Testcase.setup)=="function" then
                     local Setup=TT("setup", Testcase.setup, SETUP)
                     local R=Setup(nil)
                     aggregate(R, testcasename)
+                    local OutcomeClass_Teardown={
+                        aborted=nil, failed=nil, unexpected=nil,
+                        successful=true, void=true,
+                        disabled=true, skipped=true
+                    }
+                    if not OutcomeClass_Teardown[R.outcome] then stop="after_teardown" end
                 end
-                for _,func in ipairs(Testcase) do
-                    local R=func()
-                    aggregate(R, testcasename)
-                    nt=nt+1
-                    -- if _<last then print(SEP) end
+                if not stop then
+                    for _,func in ipairs(Testcase) do
+                        local R=func()
+                        aggregate(R, testcasename)
+                        nt=nt+1
+                        -- if _<last then print(SEP) end
+                    end
+                    if Testcase.teardown then
+                        local Teardown=TT("teardown", Testcase.teardown, TEARDOWN)
+                        local R=Teardown(nil)
+                        aggregate(R, testcasename)
+                    end
+                    local tb=bind.timestamp()
+                    local dur_testcase=tb-ta
+                    print(SEP.." "..singularplural(#Testcase, "test").." from "..testcasename.." ("..dur_testcase.." ms total)")
+                else
+                    local tb=bind.timestamp()
+                    local dur_testcase=tb-ta
+                    print(SEP.." Test was aborted because setup failed ("..dur_testcase.." ms total)")
                 end
-                if Testcase.teardown then
-                    local Teardown=TT("teardown", Testcase.teardown, TEARDOWN)
-                    local R=Teardown(nil)
-                    aggregate(R, testcasename)
-                end
-                local tb=bind.timestamp()
-                local dur_testcase=tb-ta
-                print(SEP.." "..singularplural(#Testcase, "test").." from "..testcasename.." ("..dur_testcase.." ms total)")
             end
         end
         local Tb=bind.timestamp()
