@@ -104,10 +104,10 @@ local mttest={
         end
     end,
     EXPECT_NIL=function(self, value, hint)
-        if not value then
+        if type(value)=="nil" then
             self.met_expectations=self.met_expectations+1
         else
-            local explanation=joinsep(hint, string.format("should bei nil, but is %s", helpful_value_representation(value)))
+            local explanation=joinsep(hint, string.format("should be nil, but is %s", helpful_value_representation(value)))
             print(failedexpectation(debug.traceback("",2), explanation))
             self.unmet_expectations=self.unmet_expectations+1
         end
@@ -137,10 +137,10 @@ local mttest={
         end
     end,
     ASSERT_NIL=function(self, value, hint)
-        if not value then
+        if type(value)=="nil" then
             self.asserted_ok=self.asserted_ok+1
         else
-            local explanation=joinsep(hint, string.format("should bei nil, but is %s", helpful_value_representation(value)))
+            local explanation=joinsep(hint, string.format("should be nil, but is %s", helpful_value_representation(value)))
             print(failedassertion(debug.traceback("",2), explanation))
             self.failed_assertions=self.failed_assertions+1
             -- Hier geben wir error eine Tabelle,
