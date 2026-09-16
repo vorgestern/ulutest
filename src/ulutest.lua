@@ -27,6 +27,8 @@ local SKIPPING=tags.SKIPPING
 local RUNTEST=tags.RUNTEST
 local FAILEDTEST=tags.FAILEDTEST
 local SUCCESSFULTEST=tags.SUCCESSFULTEST
+local SETUP=tags.SETUP
+local TEARDOWN=tags.TEARDOWN
 local EMPTYTEST=tags.EMPTYTEST
 local FRAME=tags.FRAME
 local SEP=tags.SEP
@@ -217,7 +219,8 @@ end
 -- Leider braucht es bisher diesen 'globalen' Zustand.
 local testcase_running=""
 
-local TT=function(name, func)
+local TT=function(name, func, starttag)
+    local starttag=starttag or RUNTEST
     local T=setmetatable({
         name=name,
         asserted_ok=0,
@@ -236,7 +239,7 @@ local TT=function(name, func)
             return {name=T.name, outcome="disabled", duration=0}
         end
         local testdotname=testcase_running.."."..name
-        print(string.format("%s %s", RUNTEST, testdotname))
+        print(string.format("%s %s", starttag, testdotname))
         local ta=bind.timestamp()
         local flag,err=xpcall(func, msghandler, T)
         local tb=bind.timestamp()
@@ -321,7 +324,7 @@ return {
                 local nt,last=0,#Testcase
                 local ta=bind.timestamp()
                 if type(Testcase.setup)=="function" then
-                    local Setup=TT("setup", Testcase.setup)
+                    local Setup=TT("setup", Testcase.setup, SETUP)
                     local R=Setup(nil)
                     aggregate(R, testcasename)
                 end
@@ -332,7 +335,7 @@ return {
                     -- if _<last then print(SEP) end
                 end
                 if Testcase.teardown then
-                    local Teardown=TT("teardown", Testcase.teardown)
+                    local Teardown=TT("teardown", Testcase.teardown, TEARDOWN)
                     local R=Teardown(nil)
                     aggregate(R, testcasename)
                 end

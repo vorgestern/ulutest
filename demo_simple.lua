@@ -59,6 +59,22 @@ ulu.RUN {
     tt("assertion", function(t)
         t:ASSERT_NOTNIL(demo4)
     end)
-}
+},
+
+{
+    name="demo_setup_teardown",
+    setup=function(t)
+        t:ASSERT_NIL(demo4)
+    end,
+    tt("expectation", function(t)
+        t:EXPECT_NIL(demo4)
+    end),
+    tt("assertion", function(t)
+        t:ASSERT_NIL(demo4)
+    end),
+    teardown=function(t)
+        t:ASSERT_NIL(demo4)
+    end,
+},
 
 }
