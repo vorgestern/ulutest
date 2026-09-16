@@ -112,6 +112,15 @@ local mttest={
             self.unmet_expectations=self.unmet_expectations+1
         end
     end,
+    EXPECT_NOTNIL=function(self, value, hint)
+        if type(value)~="nil" then
+            self.met_expectations=self.met_expectations+1
+        else
+            local explanation=joinsep(hint, string.format("should not be nil, but is."))
+            print(failedexpectation(debug.traceback("",2), explanation))
+            self.unmet_expectations=self.unmet_expectations+1
+        end
+    end,
     EXPECT_EQ=function(self, value1, value2, hint)
         if (value1 and value2 and value1==value2) or (not value1 and not value2) then
             self.met_expectations=self.met_expectations+1
@@ -141,6 +150,19 @@ local mttest={
             self.asserted_ok=self.asserted_ok+1
         else
             local explanation=joinsep(hint, string.format("should be nil, but is %s", helpful_value_representation(value)))
+            print(failedassertion(debug.traceback("",2), explanation))
+            self.failed_assertions=self.failed_assertions+1
+            -- Hier geben wir error eine Tabelle,
+            -- damit der Messagehandler den Fehler von einem Fehler im
+            -- usercode unterscheiden kann.
+            error({"Assertion NIL failed"})
+        end
+    end,
+    ASSERT_NOTNIL=function(self, value, hint)
+        if type(value)~="nil" then
+            self.asserted_ok=self.asserted_ok+1
+        else
+            local explanation=joinsep(hint, string.format("should not be nil, but is."))
             print(failedassertion(debug.traceback("",2), explanation))
             self.failed_assertions=self.failed_assertions+1
             -- Hier geben wir error eine Tabelle,

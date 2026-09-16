@@ -1,8 +1,10 @@
 
--- Provide a 'system under test'.
-local function demo1(a,b)
-    return string.format("(%s,%s)", a, b)
-end
+-- Prepare Lua's search path so locally built copies of ulutest will be found.
+local bpattern={
+    ["/"]="./?.so;",
+    ["\\"]=".\\?.dll;",
+}
+package.cpath=(bpattern[package.config:sub(1,1)] or "")..package.cpath
 
 local ok,ulu=pcall(require, "ulutest")
 
@@ -14,7 +16,14 @@ if not ok then error(string.format("\n\n%s\n", [[
         buildsys/VS17/ulutest.sln   (on Windows, Release/x86).]]))
 end
 
+-- Provide a 'system under test'.
+local function demo1(a,b)
+    return string.format("(%s,%s)", a, b)
+end
+
 local tt=ulu.TT
+
+-- Most of these tests fail -- to demonstrate the error reporting.
 
 ulu.RUN {
 
@@ -39,6 +48,16 @@ ulu.RUN {
     name="function demo3",
     tt("exists", function(t)
         t:EXPECT_EQ("function", type(demo3), "wrong type:")
+    end)
+},
+
+{
+    name="predicate notnil",
+    tt("expectation", function(t)
+        t:EXPECT_NOTNIL(demo4)
+    end),
+    tt("assertion", function(t)
+        t:ASSERT_NOTNIL(demo4)
     end)
 }
 
