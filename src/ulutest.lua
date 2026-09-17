@@ -264,7 +264,7 @@ local TT=function(name, func, starttag)
 end
 
 return {
-    version="0.21",
+    version="0.3",
     url="https://github.com/vorgestern/ulutest.git",
     tags=bind.tags,
     timestamp=bind.timestamp,

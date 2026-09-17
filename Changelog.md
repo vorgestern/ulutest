@@ -18,7 +18,9 @@ with
 Added option to output colored markdown, sadly not usable on github.
 Turned off.
 
+## 0.3 (16.9.2026)
+- Added setup- and teardown-steps per testcase.
+- Added ASSERT_NOTNIL and EXPECT_NOTNIL
+
 ## to be done
-- call optional setup/teardown
-- introduce proper tags for setup/teardown (not [RUN     ]..[     OK] but [SETUP ]..[ OK] and [TEARDOWN ]..[ OK])
-- introduce ASSERT_NOTNIL and EXPECT_NOTNIL
+- Reduce global state
